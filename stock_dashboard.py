@@ -3,11 +3,14 @@ import streamlit as st
 import pandas as pd
 import ta
 
+lang = st.selectbox("🌐 Language 語言", ["English", "中文"], index=0)
+is_en = (lang == "English")
+
 # UI
-st.title("📈 投資策略預測分析儀表板")
-ticker = st.text_input("輸入股票代碼", "AAPL")
-start = st.date_input("起始日期", pd.to_datetime("2022-01-01"))
-end = st.date_input("結束日期", pd.to_datetime("today"))
+st.title("📈 Stock Strategy Prediction Dashboard" if is_en else "📈 投資策略預測分析儀表板")
+ticker = st.text_input("Ticker Symbol" if is_en else "輸入股票代碼", "AAPL")
+start = st.date_input("Start Date" if is_en else "起始日期", pd.to_datetime("2022-01-01"))
+end = st.date_input("End Date" if is_en else "結束日期", pd.to_datetime("today"))
 
 # 抓資料
 df = yf.download(ticker, start=start, end=end, auto_adjust=True)
@@ -50,4 +53,4 @@ joblib.dump(model, "stock_model.pkl")
 model = joblib.load("stock_model.pkl")
 latest = df[features].iloc[-1:]
 prediction = model.predict(latest)[0]
-st.metric("📊 預測明日收盤價", f"${prediction:.2f}")
+st.metric("📊 Predicted Close Price (Next Day)" if is_en else "📊 預測明日收盤價", f"${prediction:.2f}")
